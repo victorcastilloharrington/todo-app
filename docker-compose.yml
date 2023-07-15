@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    expose:
+      - 5442
+    ports:
+      # Expose weird port on host to avoid collisions
+      - 5442:5432
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    restart: always
+
+  app:
+    image: node:16
+    command: sh -c "npm install && PORT=5050 npm run dev"
+    volumes:
+      - ./src:/app/src
+      - ./__tests__:/app/__tests__
+      - ./db:/app/db
+      - ./next-env.d.ts:/app/next-env.d.ts
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./package-lock.json:/app/package-lock.json
+      - node_modules:/app/node_modules
+    ports:
+      # Weird port to avoid collisions
+      - 5050:5050
+    depends_on:
+      - db
+    environment:
+      DB_ENDPOINT: postgres://postgres:postgres@db:5432/postgres
+    working_dir: /app
+    restart: always
+
+volumes:
+  dbdata:
+  node_modules:
