@@ -13,7 +13,7 @@ declare global {
   }
 
   interface ITodoContext {
-    todos?: ITodo[]
+    todos: ITodo[]
     setTodos: (todos: ITodo[]) => void
   }
 }
