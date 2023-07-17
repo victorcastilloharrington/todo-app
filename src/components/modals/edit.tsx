@@ -6,9 +6,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { FC, useState } from "react";
 import Tasks from "../tasks";
 
-const EditModal: FC<IModal & ITodo> = ({ open, handleClose, title, tasks }) => {
-  const [header, setHeader] = useState<string>(title);
-  const [editTasks, setEditTasks] = useState<ITask[]>(tasks);
+interface IEditModal extends IModal {
+  todo: ITodo;
+}
+
+const EditModal: FC<IEditModal> = ({ open, handleClose, todo }) => {
+  const [header, setHeader] = useState<string>(todo.title);
+  const [editTasks, setEditTasks] = useState<ITask[]>(todo.tasks);
 
   return (
     <Dialog
@@ -19,7 +23,7 @@ const EditModal: FC<IModal & ITodo> = ({ open, handleClose, title, tasks }) => {
     >
       <DialogTitle id="alert-dialog-title">{header}</DialogTitle>
       <DialogContent>
-        <Tasks />
+        <Tasks tasks={editTasks} />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} autoFocus>

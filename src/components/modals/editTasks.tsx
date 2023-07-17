@@ -1,37 +1,49 @@
+import * as React from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
-import { FC } from "react";
 
-const Tasks: FC<{
-  tasks: ITask[];
-  handleClick?: (index: number) => void;
-}> = ({ tasks, handleClick }) => {
+const EditTasks = (tasks: ITask) => {
+  const [checked, setChecked] = React.useState([0]);
+
+  const handleToggle = (value: number) => () => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
+
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setChecked(newChecked);
+  };
+
   return (
     <List sx={{ width: "100%", minWidth: "500px" }}>
-      {tasks.map((task, i) => {
-        const labelId = `checkbox-list-label-${task.title}`;
+      {[0, 1, 2, 3].map((value) => {
+        const labelId = `checkbox-list-label-${value}`;
 
         return (
-          <ListItem key={labelId} disablePadding>
+          <ListItem key={value} disablePadding>
             <ListItemButton
               role={undefined}
-              onClick={() => handleClick && handleClick(i)}
+              onClick={handleToggle(value)}
               dense
             >
               <ListItemIcon>
                 <Checkbox
                   edge="start"
-                  checked={task.checked}
+                  checked={checked.indexOf(value) !== -1}
                   tabIndex={-1}
                   disableRipple
                   inputProps={{ "aria-labelledby": labelId }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={`Line item ${i + 1}`} />
+              <ListItemText id={labelId} primary={`Line item ${value + 1}`} />
             </ListItemButton>
           </ListItem>
         );
@@ -40,4 +52,4 @@ const Tasks: FC<{
   );
 };
 
-export default Tasks;
+export default EditTasks;

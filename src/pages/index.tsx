@@ -1,10 +1,12 @@
 import Head from "next/head";
 import { FC, useEffect, useReducer } from "react";
-import { Divider, Typography } from "@mui/material";
+import { Button, Divider, Typography, Container, Box } from "@mui/material";
 import TodoList from "@/components/todoList";
 import { GetServerSideProps } from "next";
 import InitModal from "@/components/modals/init";
 import EditModal from "@/components/modals/edit";
+import { useTodos } from "@/hooks/useTodos";
+import { blue } from "@mui/material/colors";
 
 interface IHomeProps {
   error: any;
@@ -14,13 +16,17 @@ interface IHomeProps {
 interface IHomeState {
   initModal: boolean;
   editModal: boolean;
+  editingTodo?: ITodo;
 }
 
 interface IHomeAction {
-  type: "toggleInitModal" | "toggleEditModal";
-  payload?: string;
+  type:
+    | "toggleInitModal"
+    | "toggleEditModal"
+    | "startEditingTodo"
+    | "endEditingTodo";
+  payload?: any;
 }
-
 const initState = {
   initModal: false,
   editModal: false,
@@ -34,18 +40,39 @@ const reducer = (state: IHomeState, action: IHomeAction): IHomeState => {
     case "toggleEditModal":
       return { ...state, editModal: !state.editModal };
       break;
+    case "startEditingTodo":
+      return { ...state, editingTodo: action.payload };
+      break;
+    case "endEditingTodo":
+      //send to db
+      //remove editing todo
+      //update state
+      break;
   }
 
   return state;
 };
 
 const Home: FC<IHomeProps> = ({ error, posts }) => {
-  const [{ initModal, editModal }, dispatch] = useReducer(reducer, initState);
+  const [{ initModal, editModal, editingTodo }, dispatch] = useReducer(
+    reducer,
+    initState
+  );
+  const { todos, addTodo, removeTodo, updateTodo, initTodos } = useTodos();
+
   useEffect(() => {
     if (!posts || posts.length === 0) {
       dispatch({ type: "toggleInitModal" });
+    } else {
+      initTodos(posts);
     }
   }, [posts, posts?.length]);
+
+  const handleClickAddNew = () => {
+    const todo = addTodo();
+    dispatch({ type: "startEditingTodo", payload: todo });
+    dispatch({ type: "toggleEditModal" });
+  };
 
   return (
     <div>
@@ -59,16 +86,33 @@ const Home: FC<IHomeProps> = ({ error, posts }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Typography variant="h3" data-testid="title">
-          Todo App
-        </Typography>
-        <Divider></Divider>
-        {!posts && (
-          <div onClick={() => dispatch({ type: "toggleEditModal" })}>
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+            px: 4,
+            py: 2,
+            backgroundColor: blue[600],
+          }}
+        >
+          <Typography
+            variant="h4"
+            data-testid="title"
+            sx={{ fontWeight: "bold" }}
+          >
+            Todo App
+          </Typography>
+          <Button variant="contained" onClick={() => handleClickAddNew()}>
             Add New +
-          </div>
-        )}
-        {posts && <TodoList />}
+          </Button>
+        </Box>
+        <Divider></Divider>
+
+        <Container sx={{ py: 8 }} maxWidth="lg">
+          <TodoList addNew={handleClickAddNew} />
+        </Container>
+
         {error && (
           <Typography color="error">{JSON.stringify(error)}</Typography>
         )}
@@ -77,13 +121,13 @@ const Home: FC<IHomeProps> = ({ error, posts }) => {
         open={initModal}
         handleClose={() => dispatch({ type: "toggleInitModal" })}
       />
-      <EditModal
-        open={editModal}
-        position={0}
-        title="Example Todo"
-        tasks={[]}
-        handleClose={() => dispatch({ type: "toggleEditModal" })}
-      />
+      {editingTodo && (
+        <EditModal
+          open={editModal}
+          todo={editingTodo}
+          handleClose={() => dispatch({ type: "toggleEditModal" })}
+        />
+      )}
     </div>
   );
 };
