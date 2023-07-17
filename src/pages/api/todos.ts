@@ -4,7 +4,7 @@ import db from "../../../db/db";
 // HTTP Endpoint: `/api/example`
 const todos: NextApiHandler = async (req, res) => {
   // Gets the `id` from the query field.
-  const { id } = req.query;
+  const { session } = req.query;
 
   switch (req.method) {
     // Handles an API GET
@@ -13,7 +13,7 @@ const todos: NextApiHandler = async (req, res) => {
       const now = await db.query("SELECT NOW()");
       res.status(200).json({
         success: true,
-        id,
+        session,
         now,
         message: "hi there!",
       });
