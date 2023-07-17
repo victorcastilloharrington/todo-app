@@ -16,10 +16,7 @@ const themeOptions: ThemeOptions = {
       main: '#fdd835',
     },
     secondary: {
-      main: '#00b0ff',
-    },
-    background: {
-      default: '#080808',
+      main: '#0288d1',
     },
     text: {
       primary: '#f5f5f5',
@@ -35,6 +32,9 @@ const themeOptions: ThemeOptions = {
     },
     success: {
       main: '#8bc34a',
+    },
+    background: {
+      paper: '#202020',
     },
   },
   typography: {
