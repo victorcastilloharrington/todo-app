@@ -16,4 +16,9 @@ declare global {
     todos: ITodo[]
     setTodos: (todos: ITodo[]) => void
   }
+
+  interface IModal {
+    open: boolean
+    handleClose: () => void
+  }
 }
