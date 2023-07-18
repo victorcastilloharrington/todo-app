@@ -15,15 +15,17 @@ export const useTodos = () => {
     return blankTodo
   }
 
-  const removeTodo = (position: number) => {
+  const removeTodo = (position: number): ITodo[] => {
     const updatedTodos = [...todos].splice(position, 1)
     setTodos(updatedTodos)
+    return updatedTodos
   }
 
-  const updateTodo = (position: number, todo: ITodo) => {
+  const updateTodo = (todo: ITodo): ITodo[] => {
     const updatedTodos = [...todos]
-    updatedTodos[position] = todo
+    updatedTodos[todo.position] = todo
     setTodos(updatedTodos)
+    return updatedTodos
   }
 
   const initTodos = (posts: ITodo[]) => {

@@ -4,7 +4,10 @@ import Todo from "./todo";
 import AddNewCard from "./addNew";
 import { Grid } from "@mui/material";
 
-const TodoList: FC<{ addNew: () => void }> = ({ addNew }) => {
+const TodoList: FC<{ addNew: () => void; edit: (todo: ITodo) => void }> = ({
+  addNew,
+  edit,
+}) => {
   const { todos } = useTodos();
 
   return (
@@ -12,7 +15,9 @@ const TodoList: FC<{ addNew: () => void }> = ({ addNew }) => {
       {todos.length <= 0 ? (
         <AddNewCard handleClick={addNew} />
       ) : (
-        todos.map((todo, i) => <Todo key={`${todo}-${i}`} {...todo} />)
+        todos.map((todo, i) => (
+          <Todo key={`${todo}-${i}`} {...todo} edit={edit} />
+        ))
       )}
     </Grid>
   );

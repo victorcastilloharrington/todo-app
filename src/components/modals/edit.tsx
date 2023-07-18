@@ -7,12 +7,21 @@ import { FC, useState } from "react";
 import Tasks from "../tasks";
 
 interface IEditModal extends IModal {
-  todo: ITodo;
+  todo: IEditTodo;
 }
 
 const EditModal: FC<IEditModal> = ({ open, handleClose, todo }) => {
   const [header, setHeader] = useState<string>(todo.title);
-  const [editTasks, setEditTasks] = useState<ITask[]>(todo.tasks);
+  const [tasks, setTasks] = useState<ITask[]>(todo.tasks);
+
+  const handleCheckedToggle = (index: number) => () => {
+    const updatedTasks = [...tasks];
+    updatedTasks[index] = {
+      title: updatedTasks[index].title,
+      checked: !updatedTasks[index].checked,
+    };
+    setTasks(updatedTasks);
+  };
 
   return (
     <Dialog
@@ -23,7 +32,7 @@ const EditModal: FC<IEditModal> = ({ open, handleClose, todo }) => {
     >
       <DialogTitle id="alert-dialog-title">{header}</DialogTitle>
       <DialogContent>
-        <Tasks tasks={editTasks} />
+        <Tasks tasks={tasks} />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} autoFocus>

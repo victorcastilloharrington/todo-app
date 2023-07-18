@@ -10,13 +10,28 @@ const todos: NextApiHandler = async (req, res) => {
     // Handles an API GET
     case 'GET':
       // HTTP GET `/api/example?id=100`: 200 OK
-      const now = await db.query("SELECT NOW()");
+      const get = await db.fetchSession(session as string)
       res.status(200).json({
         success: true,
         session,
-        now,
-        message: "hi there!",
+        posts: get.posts,
       });
+      break;
+    case 'POST':
+      const post = await db.insertTodo(JSON.parse(req.body))
+      res.status(201).json({
+        success: true,
+        session: post.session,
+        data: post.posts,
+      })
+      break;
+    case 'PUT':
+      const put = await db.updateTodo(JSON.parse(req.body), session as string)
+      res.status(201).json({
+        success: true,
+        session: put.session,
+        data: put.posts,
+      })
       break;
     default:
       // Handles all other HTTP methods with a 404

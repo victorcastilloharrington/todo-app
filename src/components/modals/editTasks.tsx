@@ -6,22 +6,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 
-const EditTasks = (tasks: ITask) => {
-  const [checked, setChecked] = React.useState([0]);
-
-  const handleToggle = (value: number) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);
-  };
-
+const EditTasks = (tasks: ITask, handleToggle: (index: number) => void) => {
   return (
     <List sx={{ width: "100%", minWidth: "500px" }}>
       {[0, 1, 2, 3].map((value) => {
@@ -31,13 +16,13 @@ const EditTasks = (tasks: ITask) => {
           <ListItem key={value} disablePadding>
             <ListItemButton
               role={undefined}
-              onClick={handleToggle(value)}
+              onClick={() => handleToggle(value)}
               dense
             >
               <ListItemIcon>
                 <Checkbox
                   edge="start"
-                  checked={checked.indexOf(value) !== -1}
+                  checked={tasks.checked}
                   tabIndex={-1}
                   disableRipple
                   inputProps={{ "aria-labelledby": labelId }}

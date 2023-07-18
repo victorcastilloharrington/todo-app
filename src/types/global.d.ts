@@ -21,4 +21,23 @@ declare global {
     open: boolean
     handleClose: () => void
   }
+
+  interface IEditTodo extends ITodo {
+    isNew?: boolean
+  }
+
+  interface IHomeState {
+    initModal: boolean;
+    editModal: boolean;
+    editingTodo?: IEditTodo;
+  }
+
+  interface IHomeAction {
+    type:
+    | "toggleInitModal"
+    | "toggleEditModal"
+    | "startEditingTodo"
+    | "endEditingTodo";
+    payload?: any;
+  }
 }

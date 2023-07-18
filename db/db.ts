@@ -1,6 +1,6 @@
 require("dotenv").config();
-import { Pool } from "pg";
-
+import { Pool, QueryResult } from "pg";
+import { CREATE_SESSION_TABLE_QUERY, FETCH_SESSION_QUERY, INSERT_TODOS_QUERY, UPDATE_TODOS_QUERY } from './constants'
 // Sets up a connection pool to a Postgres database
 // To query the database:
 // ```
@@ -30,7 +30,7 @@ const pool = new Pool({
  * const result = await query('INSERT INTO "user"(name, email) VALUES($1, $2)', ['brianc', 'brian.m.carlson@gmail.com'])
  * ```
  */
-const query = async (text: string, params?: string[]) => {
+const query = async (text: string, params?: string[]): Promise<any[]> => {
   return new Promise((resolve, reject) => {
     const executionParams = params ? params : [];
     console.log("[db/db.ts] Executing query:", text, executionParams);
@@ -45,5 +45,23 @@ const query = async (text: string, params?: string[]) => {
   });
 };
 
-const db = { query }
+const createTableSession = async () => await query(CREATE_SESSION_TABLE_QUERY)
+
+const fetchSession = async (session: string) => {
+  const result = await query(FETCH_SESSION_QUERY, [session])
+  return result[0]
+}
+
+const insertTodo = async (todo: ITodo) => {
+  await createTableSession()
+  const result = await query(INSERT_TODOS_QUERY, [JSON.stringify(todo), (new Date()).toISOString()])
+  return result[0]
+}
+
+const updateTodo = async (todo: ITodo, session: string) => {
+  const result = await query(UPDATE_TODOS_QUERY, [JSON.stringify(todo), (new Date()).toISOString(), session])
+  return result[0]
+}
+
+const db = { fetchSession, insertTodo, updateTodo }
 export default db;

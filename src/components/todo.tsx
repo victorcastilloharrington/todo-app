@@ -8,7 +8,12 @@ import {
   Grid,
 } from "@mui/material";
 import Tasks from "./tasks";
-const Todo: FC<ITodo> = ({ position, title, tasks }) => {
+const Todo: FC<ITodo & { edit: (payload: ITodo) => void }> = ({
+  position,
+  title,
+  tasks,
+  edit,
+}) => {
   return (
     <Grid item key={title + position} xs={12} sm={6} md={4}>
       <Card>
@@ -19,7 +24,9 @@ const Todo: FC<ITodo> = ({ position, title, tasks }) => {
           <Tasks tasks={tasks} />
         </CardContent>
         <CardActions>
-          <Button size="small">Edit Todo</Button>
+          <Button size="small" onClick={() => edit({ position, title, tasks })}>
+            Edit Todo
+          </Button>
         </CardActions>
       </Card>
     </Grid>
