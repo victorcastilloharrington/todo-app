@@ -9,6 +9,7 @@ import { useTodos } from "@/hooks/useTodos";
 import { blue } from "@mui/material/colors";
 import { deleteFromState } from "@/utils";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 interface IHomeProps {
   error: any;
@@ -119,16 +120,10 @@ const Home: FC<IHomeProps> = ({ error, posts }) => {
             justifyContent: "space-between",
             px: 4,
             py: 2,
-            backgroundColor: blue[600],
           }}
         >
-          <Typography
-            variant="h4"
-            data-testid="title"
-            sx={{ fontWeight: "bold" }}
-          >
-            Todo App
-          </Typography>
+          <Image src="/logo.svg" height={50} width={200} alt="logo" />
+
           <Button variant="contained" onClick={() => handleAddClick()}>
             Add New +
           </Button>
