@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -16,10 +16,12 @@ const InitModal: FC<IModal> = ({ open, handleClose }) => {
     >
       <DialogTitle id="alert-dialog-title">Usage Notes</DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          Click the plus icon in the top bar to add a new note. bookmark the URL
-          to save your session (and all your notes!)
-        </DialogContentText>
+        <Typography gutterBottom>
+          1. Press the Add New button to add a new note.
+        </Typography>
+        <Typography gutterBottom>
+          2. If a note is added, bookmark the URL to save your notes.
+        </Typography>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} autoFocus>

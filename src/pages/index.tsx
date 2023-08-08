@@ -17,7 +17,7 @@ interface IHomeProps {
 }
 
 const initState = {
-  initModal: false,
+  initModal: true,
   editModal: false,
 };
 
