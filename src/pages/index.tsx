@@ -1,14 +1,14 @@
 import Head from "next/head";
-import {FC, useEffect, useReducer} from "react";
-import {Box, Button, Container, Divider, Typography} from "@mui/material";
+import { FC, useEffect, useReducer } from "react";
+import { Box, Button, Container, Divider, Typography } from "@mui/material";
 import TodoList from "@/components/todoList";
-import {GetServerSideProps} from "next";
+import { GetServerSideProps } from "next";
 import InitModal from "@/components/modals/init";
 import EditModal from "@/components/modals/edit";
-import {useTodos} from "@/hooks/useTodos";
-import {useRouter} from "next/router";
+import { useTodos } from "@/hooks/useTodos";
+import { useRouter } from "next/router";
 import Image from "next/image";
-import {initState, reducer} from "@/utils";
+import { initState, reducer } from "@/utils";
 
 interface IHomeProps {
   error: any;
@@ -17,20 +17,21 @@ interface IHomeProps {
 
 const Home: FC<IHomeProps> = ({ error, posts }) => {
   const router = useRouter();
-  const [{ initModal, editModal, editingTodo }, dispatch] = useReducer(
+  const [ { initModal, editModal, editingTodo }, dispatch ] = useReducer(
     reducer,
     initState
   );
-  const { todos, addTodo, removeTodo, updateTodo, initTodos } = useTodos();
-
+  const { addTodo, updateTodo, initTodos } = useTodos();
+  
   useEffect(() => {
-    if (!posts || posts.length === 0) {
-      dispatch({ type: "toggleInitModal" });
-    } else {
-      initTodos(posts);
-    }
-  }, [posts]);
-
+      if (!posts || posts.length === 0) {
+        dispatch({ type: "toggleInitModal" });
+      } else {
+        initTodos(posts);
+      }
+    },
+    [ posts, initTodos ]);
+  
   //TODO: SWR
   const handleRequest = (
     body: string,
@@ -41,25 +42,25 @@ const Home: FC<IHomeProps> = ({ error, posts }) => {
       : "/api/todos";
     return fetch(url, { method, body });
   };
-
+  
   const handleAddClick = async () => {
     const todo = addTodo();
     dispatch({ type: "startEditingTodo", payload: { ...todo, isNew: true } });
     dispatch({ type: "toggleEditModal" });
   };
-
+  
   const handleEditClick = async (payload: ITodo) => {
     dispatch({ type: "startEditingTodo", payload });
     dispatch({ type: "toggleEditModal" });
   };
-
+  
   const handleSaveClick = async () => {
     try {
       if (!editingTodo) throw new Error("No todo to edit");
       const updatedTodo = { ...editingTodo };
       delete updatedTodo.isNew;
       const list = updateTodo(updatedTodo);
-
+      
       const res = await handleRequest(
         JSON.stringify(list),
         editingTodo.isNew ? "POST" : "PUT"
@@ -67,15 +68,15 @@ const Home: FC<IHomeProps> = ({ error, posts }) => {
       const data = await res.json();
       dispatch({ type: "endEditingTodo" });
       dispatch({ type: "toggleEditModal" });
-
+      
       if (!data.session || data.session !== router.query.session)
-        await router.replace({query: {session: data.session}});
+        await router.replace({ query: { session: data.session } });
     } catch (err: any) {
       console.error(err.message);
       dispatch({ type: "toggleEditModal" });
     }
   };
-
+  
   return (
     <div>
       <Head>
@@ -84,8 +85,7 @@ const Home: FC<IHomeProps> = ({ error, posts }) => {
           name="description"
           content="Todo app showcasing NextJS features"
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
       </Head>
       <main>
         <Box
@@ -97,18 +97,18 @@ const Home: FC<IHomeProps> = ({ error, posts }) => {
             py: 2,
           }}
         >
-          <Image src="/logo.svg" height={50} width={200} alt="logo" />
-
+          <Image src="/logo.svg" height={50} width={200} alt="logo"/>
+          
           <Button variant="contained" onClick={() => handleAddClick()}>
             Add New +
           </Button>
         </Box>
         <Divider></Divider>
-
+        
         <Container sx={{ py: 8 }} maxWidth="lg">
-          <TodoList addNew={handleAddClick} edit={handleEditClick} />
+          <TodoList addNew={handleAddClick} edit={handleEditClick}/>
         </Container>
-
+        
         {error && (
           <Typography color="error">{JSON.stringify(error)}</Typography>
         )}
@@ -147,7 +147,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     // return error message
     return { props: { error: err.message } };
   }
-
+  
   return { props: {} };
 };
 
