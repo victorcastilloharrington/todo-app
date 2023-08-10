@@ -25,7 +25,7 @@ const Todo: FC<ITodo & { edit: (payload: ITodo) => void }> = ({
         </CardContent>
         <CardActions>
           <Button size="small" onClick={() => edit({ position, title, tasks })}>
-            Edit Todo
+            Edit
           </Button>
         </CardActions>
       </Card>

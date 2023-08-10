@@ -1,44 +1,19 @@
 import Head from "next/head";
-import { FC, useEffect, useReducer } from "react";
-import { Button, Divider, Typography, Container, Box } from "@mui/material";
+import {FC, useEffect, useReducer} from "react";
+import {Box, Button, Container, Divider, Typography} from "@mui/material";
 import TodoList from "@/components/todoList";
-import { GetServerSideProps } from "next";
+import {GetServerSideProps} from "next";
 import InitModal from "@/components/modals/init";
 import EditModal from "@/components/modals/edit";
-import { useTodos } from "@/hooks/useTodos";
-import { blue } from "@mui/material/colors";
-import { deleteFromState } from "@/utils";
-import { useRouter } from "next/router";
+import {useTodos} from "@/hooks/useTodos";
+import {useRouter} from "next/router";
 import Image from "next/image";
+import {initState, reducer} from "@/utils";
 
 interface IHomeProps {
   error: any;
   posts: any;
 }
-
-const initState = {
-  initModal: true,
-  editModal: false,
-};
-
-const reducer = (state: IHomeState, action: IHomeAction): IHomeState => {
-  switch (action.type) {
-    case "toggleInitModal":
-      return { ...state, initModal: !state.initModal };
-      break;
-    case "toggleEditModal":
-      return { ...state, editModal: !state.editModal };
-      break;
-    case "startEditingTodo":
-      return { ...state, editingTodo: action.payload };
-      break;
-    case "endEditingTodo":
-      return deleteFromState(state, "editingTodo");
-      break;
-  }
-
-  return state;
-};
 
 const Home: FC<IHomeProps> = ({ error, posts }) => {
   const router = useRouter();
@@ -92,9 +67,9 @@ const Home: FC<IHomeProps> = ({ error, posts }) => {
       const data = await res.json();
       dispatch({ type: "endEditingTodo" });
       dispatch({ type: "toggleEditModal" });
-      console.log("session", data.session);
+
       if (!data.session || data.session !== router.query.session)
-        router.replace({ query: { session: data.session } });
+        await router.replace({query: {session: data.session}});
     } catch (err: any) {
       console.error(err.message);
       dispatch({ type: "toggleEditModal" });
@@ -146,6 +121,9 @@ const Home: FC<IHomeProps> = ({ error, posts }) => {
         <EditModal
           open={editModal}
           todo={editingTodo}
+          setTodo={(payload: IEditTodo) =>
+            dispatch({ type: "startEditingTodo", payload })
+          }
           handleClose={handleSaveClick}
         />
       )}
