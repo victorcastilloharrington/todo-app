@@ -60,7 +60,6 @@ const Home: FC<IHomeProps> = ({ error, posts }) => {
       if (!editingTodo) throw new Error("No todo to edit");
       
       const list = updateTodo(editingTodo);
-      console.log('session', !!router.query?.session)
       const res = await handleRequest(
         JSON.stringify(list),
         router.query?.session ? "PUT" : "POST"
