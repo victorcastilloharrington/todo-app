@@ -8,8 +8,8 @@ import Tasks from "../tasks";
 import { taskFactory } from "@/utils";
 
 interface IEditModal extends IModal {
-  todo: IEditTodo;
-  setTodo: (payload: IEditTodo) => void;
+  todo: ITodo;
+  setTodo: (payload: ITodo) => void;
 }
 
 const EditModal: FC<IEditModal> = ({ open, handleClose, setTodo, todo }) => {

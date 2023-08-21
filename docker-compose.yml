@@ -21,6 +21,7 @@ services:
     command: sh -c "npm install && PORT=5050 npm run dev"
     volumes:
       - ./src:/app/src
+      - ./public:/app/public
       - ./__tests__:/app/__tests__
       - ./db:/app/db
       - ./next-env.d.ts:/app/next-env.d.ts

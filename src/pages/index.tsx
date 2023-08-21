@@ -30,22 +30,23 @@ const Home: FC<IHomeProps> = ({ error, posts }) => {
         initTodos(posts);
       }
     },
-    [ posts, initTodos ]);
+    [ posts ]);
   
   //TODO: SWR
   const handleRequest = (
     body: string,
     method: "GET" | "POST" | "PUT" = "GET"
   ) => {
-    const url = router.query?.session
-      ? `/api/todos?session=${router.query.session}`
+    const session = router.query?.session
+    const url = session
+      ? `/api/todos?session=${session}`
       : "/api/todos";
     return fetch(url, { method, body });
   };
   
   const handleAddClick = async () => {
     const todo = addTodo();
-    dispatch({ type: "startEditingTodo", payload: { ...todo, isNew: true } });
+    dispatch({ type: "startEditingTodo", payload: { ...todo } });
     dispatch({ type: "toggleEditModal" });
   };
   
@@ -57,13 +58,12 @@ const Home: FC<IHomeProps> = ({ error, posts }) => {
   const handleSaveClick = async () => {
     try {
       if (!editingTodo) throw new Error("No todo to edit");
-      const updatedTodo = { ...editingTodo };
-      delete updatedTodo.isNew;
-      const list = updateTodo(updatedTodo);
       
+      const list = updateTodo(editingTodo);
+      console.log('session', !!router.query?.session)
       const res = await handleRequest(
         JSON.stringify(list),
-        editingTodo.isNew ? "POST" : "PUT"
+        router.query?.session ? "PUT" : "POST"
       );
       const data = await res.json();
       dispatch({ type: "endEditingTodo" });
@@ -121,7 +121,7 @@ const Home: FC<IHomeProps> = ({ error, posts }) => {
         <EditModal
           open={editModal}
           todo={editingTodo}
-          setTodo={(payload: IEditTodo) =>
+          setTodo={(payload: ITodo) =>
             dispatch({ type: "startEditingTodo", payload })
           }
           handleClose={handleSaveClick}
